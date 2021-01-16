@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<title>Dynamic stylesheet demo</title>
+
+	<script src="build/index.js"></script>
+
+</head>
+<body>
+
+	<div id="app">
+
+		<header>
+			<h1>Demo</h1>
+		</header>
+
+		<p class="demo">If this text is coloured, a dynamic stylesheet has been rendered.</p>
+
+		<p>
+			<button onclick="rerender('teal')">Set teal</button>
+			<button onclick="rerender('lime')">Set lime</button>
+		</p>
+
+	</div>
+
+<script>
+
+var dynamicStyle = null;
+
+function rerender(color) {
+	if (!color) {
+		color = 'blue';
+	}
+
+	if (dynamicStyle) {
+		dynamicStyle.parentNode.removeChild(dynamicStyle);
+		dynamicStyle = null;
+	}
+
+	dynamicStyle = DynamicStylesheet.appendStylesheet(document.head, [
+		'/* comments appear in innerHTML output */',
+		{'#app': {
+			'>header': {
+				'padding': '10px 0',
+				'background-color': 'aquamarine',
+				'>h1': {
+					'color': 'white',
+				},
+			},
+			'p': {
+				'&.demo': {
+					'color': color,
+					'font-weight': 'bold',
+					'text-decoration': 'underline wavy',
+				},
+			},
+		}},
+	], /* innerHTML */ true);
+}
+
+rerender();
+
+</script>
+
+</body>
+</html>

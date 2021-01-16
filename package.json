@@ -1,0 +1,36 @@
+{
+  "name": "@macu/dynamic-stylesheet-js",
+  "version": "1.0.0",
+  "description": "Dynamically render a document stylesheet",
+  "main": "build/index.js",
+  "scripts": {
+    "prod": "webpack --config webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/macu/dynamic-stylesheet-js.git"
+  },
+  "keywords": [
+    "stylesheet",
+    "dynamic",
+    "javascript",
+    "css"
+  ],
+  "author": "Matt Cudmore <cudmore.mb@gmail.com>",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/macu/dynamic-stylesheet-js/issues"
+  },
+  "homepage": "https://macu.github.io/dynamic-stylesheet-js/",
+  "files": [
+    "index.js",
+    "build/**"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "babel-loader": "^8.2.2",
+    "webpack": "^5.11.0",
+    "webpack-cli": "^4.2.0"
+  }
+}
