@@ -14,6 +14,8 @@ Arrays are supported; entries may be either `'propertyName: value'` strings, `/*
 
 ## Usage
 
+[See demo](https://macu.github.io/dynamic-stylesheet-js/demo.html)
+
 ```js
 var color = 'blue';
 var rules = [
