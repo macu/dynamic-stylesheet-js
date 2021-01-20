@@ -12,6 +12,8 @@ If a nested selector does not begin with a combinator (`>`, `+`, or `~`) or pseu
 
 Arrays are supported; entries may be either `'propertyName: value'` strings, `/* comments */`, or nested rulesets.
 
+Comments may also appear as keys in object rulesets, where the value indicates whether to output the comment.
+
 ## Usage
 
 [See demo](https://macu.github.io/dynamic-stylesheet-js/demo.html)
@@ -20,8 +22,11 @@ Arrays are supported; entries may be either `'propertyName: value'` strings, `/*
 var color = 'blue';
 var rules = [
 	'/* comments appear in innerHTML output */',
+	'',
 	{'#app': {
 		'>header': {
+			'/* conditional comment 1 */': true,
+			'/* conditional comment 2 */': false, // omitted
 			'padding': '10px 0',
 			'background-color': 'aquamarine',
 			'>h1': {
@@ -33,6 +38,7 @@ var rules = [
 			'&.demo': {
 				'font-weight': 'bold',
 				'text-decoration': 'underline wavy',
+				'test': null, // omitted
 			},
 		},
 	}},
@@ -69,7 +75,10 @@ Rendered stylesheet:
 
 ```css
 <style type="text/css">
+/* comments appear in innerHTML output */
+
 #app>header {
+	/* conditional comment 1 */
 	padding: 10px 0;
 	background-color: aquamarine;
 }

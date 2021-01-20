@@ -17,7 +17,7 @@
 
 		<p class="demo">If this text is coloured, a dynamic stylesheet has been rendered.</p>
 
-		<p>
+		<p class="actions">
 			<button onclick="rerender('teal')">Set teal</button>
 			<button onclick="rerender('lime')">Set lime</button>
 		</p>
@@ -40,8 +40,11 @@ function rerender(color) {
 
 	dynamicStyle = DynamicStylesheet.appendStylesheet(document.head, [
 		'/* comments appear in innerHTML output */',
+		'', // blank lines appear in output
 		{'#app': {
 			'>header': {
+				'/* conditional comment 1 */': true,
+				'/* conditional comment 2 */': false, // omitted
 				'padding': '10px 0',
 				'background-color': 'aquamarine',
 				'>h1': {
@@ -49,10 +52,13 @@ function rerender(color) {
 				},
 			},
 			'p': {
-				'&.demo': {
+				':not(.actions)': {
 					'color': color,
+				},
+				'&.demo': {
 					'font-weight': 'bold',
 					'text-decoration': 'underline wavy',
+					'test': null, // omitted
 				},
 			},
 		}},

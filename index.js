@@ -1,5 +1,4 @@
 // TODO handle media queries
-// TODO support comments in object literals
 
 const reCOMMENT = /^\/\*(?:[^\*]|\*(?!\/))+\*\/$/;
 
@@ -44,27 +43,31 @@ export function addStylesheetRules(style, rules, selectors = [], index = 0) {
 	if (Array.isArray(rules)) {
 		for (let i = 0; i < rules.length; i++) {
 			let rule = rules[i];
-			if (typeof rule === 'string') { // take as literal name:value rule
-				stringRules.push(rule);
-			} else if (typeof rule === 'object') { // object or array
-				addStringRules();
-				added += addStylesheetRules(style, rule, selectors, index + added);
+			if (rule) {
+				if (typeof rule === 'string') { // take as literal name:value rule
+					stringRules.push(rule);
+				} else if (typeof rule === 'object') { // object or array
+					addStringRules();
+					added += addStylesheetRules(style, rule, selectors, index + added);
+				}
 			}
 		}
 	} else {
 		for (let key in rules) {
 			if (rules.hasOwnProperty(key)) {
 				let rule = rules[key];
-				if (typeof rule === 'string') {
-					stringRules.push(key + ':' + rule + ';');
-				} else if (typeof rule === 'object') { // object or string
-					addStringRules();
-					if (key.charAt(0) === '&') {
-						key = key.substr(1);
-					} else if (['>', ':', '+', '~', ' '].indexOf(key.charAt(0)) < 0) {
-						key = ' ' + key; // descendent selector
+				if (rule) {
+					if (typeof rule === 'string') {
+						stringRules.push(key + ':' + rule + ';');
+					} else if (typeof rule === 'object') { // object or string
+						addStringRules();
+						if (key.charAt(0) === '&') {
+							key = key.substr(1);
+						} else if (['>', ':', '+', '~', ' '].indexOf(key.charAt(0)) < 0) {
+							key = ' ' + key; // descendent selector
+						}
+						added += addStylesheetRules(style, rule, selectors.concat([key]), index + added);
 					}
-					added += addStylesheetRules(style, rule, selectors.concat([key]), index + added);
 				}
 			}
 		}
@@ -78,7 +81,7 @@ export function addStylesheetRules(style, rules, selectors = [], index = 0) {
 // returns a string for assiging innerHTML
 export function buildStylesheetCSS(rules, selectors = []) {
 	if (!rules || typeof rules !== 'object') {
-		return 0;
+		return '';
 	}
 
 	let added = '';
@@ -92,7 +95,7 @@ export function buildStylesheetCSS(rules, selectors = []) {
 				let rule = stringRules[i].trim();
 				if (!rule) {
 					// Include empty lines in output
-					compiledStringRules.push(rule);
+					compiledStringRules.push('');
 				} else if (rule.charAt(rule.length - 1) === ';' || reCOMMENT.test(rule)) {
 					compiledStringRules.push(rule);
 				} else {
@@ -120,7 +123,7 @@ export function buildStylesheetCSS(rules, selectors = []) {
 			let rule = rules[i];
 			if (typeof rule === 'string') { // take as literal name:value rule
 				stringRules.push(rule);
-			} else if (typeof rule === 'object') { // object or array
+			} else if (rule && typeof rule === 'object') { // object or array
 				addStringRules();
 				added += buildStylesheetCSS(rule, selectors.concat(['']));
 			}
@@ -129,16 +132,24 @@ export function buildStylesheetCSS(rules, selectors = []) {
 		for (let key in rules) {
 			if (rules.hasOwnProperty(key)) {
 				let rule = rules[key];
-				if (typeof rule === 'string') {
-					stringRules.push(key + ': ' + rule + ';');
-				} else if (typeof rule === 'object') { // object or string
-					addStringRules();
-					if (key.charAt(0) === '&') {
-						key = key.substr(1);
-					} else if (['>', ':', '+', '~', ' '].indexOf(key.charAt(0)) < 0) {
-						key = ' ' + key; // descendent selector
+				if (rule) {
+					switch (typeof rule) {
+						case 'string':
+							stringRules.push(key + ': ' + rule + ';');
+							break;
+						case 'object': // object or array
+							addStringRules();
+							if (key.charAt(0) === '&') {
+								key = key.substr(1);
+							} else if (['>', ':', '+', '~', ' '].indexOf(key.charAt(0)) < 0) {
+								key = ' ' + key; // descendent selector
+							}
+							added += buildStylesheetCSS(rule, selectors.concat([key]));
+							break;
+						case 'boolean': // comment key
+							stringRules.push(key);
+							break;
 					}
-					added += buildStylesheetCSS(rule, selectors.concat([key]));
 				}
 			}
 		}
